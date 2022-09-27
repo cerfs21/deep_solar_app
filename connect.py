@@ -1,5 +1,5 @@
-# connect v1.3:
-#   English comments
+# connect v1.4:
+#   absolute path for user_connect_db.sqlite
 
 from datetime import datetime
 
@@ -44,7 +44,7 @@ class Connection(Base):
        return f"Connection({self.user.name} at {self.date})"
 
 
-def create_session(path="./data/user_connect_db.sqlite"):
+def create_session(path="/var/www/deep_solar_app/data/user_connect_db.sqlite"):
     engine = create_engine(f"sqlite:///{path}", echo=False)
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)

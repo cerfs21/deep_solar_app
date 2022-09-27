@@ -1,5 +1,5 @@
-# deep_solar_app v3.2
-#   fixed typo on last line (app.run_server)
+# deep_solar_app v3.3
+#   absolute paths for dataset and model
 
 #################
 # Import & Load #
@@ -22,7 +22,7 @@ from visualize import make_figure_from_prediction
 
 
 # Load dataset
-areas = pd.read_csv('./data/deepsolar_tract.csv', encoding = "ISO-8859-1")
+areas = pd.read_csv('/var/www/deep_solar_app/data/deepsolar_tract.csv', encoding = "ISO-8859-1")
 
 
 #############################
@@ -496,7 +496,7 @@ def get_result_callback(state_selected, county_selected, fips_selected, input_va
     print("Valeurs retenues :", input_values)
     current_val = areas[areas["fips"]==fips_selected]["solar_panel_area_per_capita"].values[0]
     population = areas[areas["fips"]==fips_selected]["population"].values[0]
-    prediction = load_model_and_predict("./data/Deep_Solar_model", input_values, input_ids)
+    prediction = load_model_and_predict("/var/www/deep_solar_app/data/Deep_Solar_model", input_values, input_ids)
     installed = int(current_val*population)
     target = int(prediction*population)
         
