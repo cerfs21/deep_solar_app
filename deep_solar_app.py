@@ -1,6 +1,5 @@
-# deep_solar_app v3.1
-#   fixed import from connect module misspelt as connection_log
-#   changed last lines for web hosting
+# deep_solar_app v3.2
+#   fixed typo on last line (app.run_server)
 
 #################
 # Import & Load #
@@ -532,4 +531,4 @@ def get_result_callback(state_selected, county_selected, fips_selected, input_va
 
 server = app.server
 if __name__ == '__main__':
-    app.run_server(debug=False, ,host='0.0.0.0',port='8050')
+    app.run_server(debug=False, host='0.0.0.0', port='8050')
