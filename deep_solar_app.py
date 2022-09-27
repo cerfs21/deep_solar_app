@@ -1,8 +1,6 @@
-# deep_solar_app v3.0:
-#	English comments
-#   connection_log.py renamed to connect.py
-#	visualization.py renamed to visualize.py
-#	logo image converted to webp and renamed with _
+# deep_solar_app v3.1
+#   fixed import from connect module misspelt as connection_log
+#   changed last lines for web hosting
 
 #################
 # Import & Load #
@@ -20,7 +18,7 @@ from dash_extensions.enrich import Output, DashProxy, Input, State, MultiplexerT
 from dash.exceptions import PreventUpdate
 
 from predict import load_model_and_predict
-from connection_log import get_greeting_text
+from connect import get_greeting_text
 from visualize import make_figure_from_prediction
 
 
@@ -532,6 +530,6 @@ def get_result_callback(state_selected, county_selected, fips_selected, input_va
 
     return prediction_text, prediction_figure, get_next_tab(active_tab), False, False, False
 
-
+server = app.server
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False, ,host='0.0.0.0',port='8050')
