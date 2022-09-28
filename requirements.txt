@@ -1,0 +1,9 @@
+dash
+dash_bootstrap_components
+dash_extensions
+gdown
+numpy
+pandas
+scikit-learn=1.1.2
+sqlalchemy
+testresources
