@@ -1,7 +1,5 @@
-# deep_solar_app v3.4
-#   new PRINT_to_LOG flag
-#   edit app.run_server args
-#   load dataset from Google Drive
+# deep_solar_app v3.5
+#   add app.title
 
 #################
 # Import & Load #
@@ -79,6 +77,7 @@ app = DashProxy(
     transforms=[MultiplexerTransform()],
     external_stylesheets=[dbc.themes.BOOTSTRAP],
 )
+app.title = 'Deep Solar App.'
 
 # Application name and logo displayed on top left of all tabs
 logo_and_title = dbc.Row(
@@ -156,7 +155,7 @@ def get_next_tab(active_tab):
 HIDE_TABS = True
 HIDE_HOME_BUTTON = False
 
-# Debug flag to control printing to console and server log
+# Debug flag to control console output
 PRINT_to_LOG = False
 
 
@@ -451,13 +450,12 @@ def fips_options_callback(county_selected):
     Input(component_id=input_ids[2], component_property="value"),
 )
 def get_default_callback(fips_selected):
-    if PRINT_to_LOG:
-        print("******************************")
-        print("FIPS sélectionné :", fips_selected)
     default_val = []
     for i in range(3, len(input_ids)):
         default_val.append(areas[areas["fips"]==fips_selected][input_ids[i]].values[0])
     if PRINT_to_LOG:
+        print("******************************")
+        print("FIPS sélectionné :", fips_selected)
         print("Default values for FIPS selected", default_val)
     return default_val
 
