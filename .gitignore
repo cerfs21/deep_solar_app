@@ -1,2 +1,3 @@
 __pycache__/
-data/
+data/user_connect_db.sqlite
+data/deepsolar_tract.csv
