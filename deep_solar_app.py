@@ -1,5 +1,7 @@
-# deep_solar_app v3.3
-#   absolute paths for dataset and model
+# deep_solar_app v3.4
+#   new PRINT_to_LOG flag
+#   edit app.run_server args
+#   load dataset from Google Drive
 
 #################
 # Import & Load #
@@ -8,6 +10,7 @@
 # Import Python librairies
 import numpy as np
 import pandas as pd
+import gdown
 
 import dash
 import dash_bootstrap_components as dbc
@@ -20,9 +23,11 @@ from predict import load_model_and_predict
 from connect import get_greeting_text
 from visualize import make_figure_from_prediction
 
-
-# Load dataset
-areas = pd.read_csv('/var/www/deep_solar_app/data/deepsolar_tract.csv', encoding = "ISO-8859-1")
+# Load dataset from Google Drive
+file_url = 'https://drive.google.com/uc?id=1R7QpNyp_v0LebCJUbFv4F7m091GQVlek'
+file_path = '/var/www/deep_solar_app/data/deepsolar_tract.csv'
+gdown.download(file_url, file_path, quiet=True, use_cookies=False)
+areas = pd.read_csv(file_path, encoding = "ISO-8859-1")
 
 
 #############################
@@ -102,7 +107,7 @@ home_button = dbc.Row(
     className="mb-4"
 )
 
-# Buttons on first 4 tabs, allowing to get to the next tab up to the 5th and last tab 
+# Buttons on first 4 tabs, allowing to get to the next tab up to the 5th and last tab
 buttons = [
     # Button to get from Home tab to Connection tab
     dbc.Button("Commencer", id="start-button"),
@@ -117,7 +122,7 @@ buttons = [
     dbc.Button("Obtenir une prédiction", id="predict-button"),
 
     # Button to get back to Parameters tab from Result tab
-    dbc.Button("Modifier les paramètres", id="param-button"),    
+    dbc.Button("Modifier les paramètres", id="param-button"),
 ]
 
 # Input form for model parameters, other than those selecting an area and its default parameter values
@@ -131,7 +136,7 @@ for i in range(3, len(input_ids)):
                         dbc.InputGroupText(input_labels[i]),
                         dbc.Input(id=input_ids[i], placeholder=input_notes[i], type="number"),
                     ]
-                )    
+                )
             ],
             className="mb-2",
         )
@@ -150,6 +155,9 @@ def get_next_tab(active_tab):
 # Dash parameters to control displaying tabs and home button
 HIDE_TABS = True
 HIDE_HOME_BUTTON = False
+
+# Debug flag to control printing to console and server log
+PRINT_to_LOG = False
 
 
 #####################
@@ -175,7 +183,7 @@ tabs = dbc.Tabs([
                             html.H6(f"Prédire son potentiel d'évolution"),
                             html.H6(f"Evaluer l'influence de certains paramètres sur ce potentiel"),
                         ]),
-                    ])),    
+                    ])),
                 ],
                 className="mb-4",
             ),
@@ -277,7 +285,7 @@ tabs = dbc.Tabs([
         ],
         label="Paramètres"
     ),
-    
+
     # 5th (Result) tab
     # Display model prediction for the selected area based on selected parameter values
     dbc.Tab(
@@ -308,7 +316,7 @@ tabs = dbc.Tabs([
                         className="mb-2",
                     ),
                 ]
-            ),            
+            ),
         ],
         label="Résultat"
     ),
@@ -341,7 +349,7 @@ app.layout = dbc.Container([
                 ],
                 sm=12, lg=6,
             ),
-            
+
             # Picture on right half of the screen
             dbc.Col(
                 html.Img(
@@ -376,7 +384,7 @@ def home_button(n_clicks):
     Output(component_id="tabs", component_property="active_tab"),
 
     State(component_id="tabs", component_property="active_tab"),
-    
+
     Input(component_id="start-button", component_property="n_clicks"),
     Input(component_id="launch-button", component_property="n_clicks"),
     Input(component_id="param-button", component_property="n_clicks"),
@@ -402,7 +410,7 @@ def enter_id_callback(name, active_tab, n_clicks):
         return no_update, no_update, True
 
     text1, text2 = get_greeting_text(name)
-    
+
     return text1, text2, get_next_tab(active_tab), False
 
 
@@ -439,16 +447,18 @@ def fips_options_callback(county_selected):
     Output(component_id=input_ids[9], component_property="value"),
     Output(component_id=input_ids[10], component_property="value"),
     Output(component_id=input_ids[11], component_property="value"),
-    
+
     Input(component_id=input_ids[2], component_property="value"),
 )
 def get_default_callback(fips_selected):
-    print("******************************")
-    print("FIPS sélectionné :", fips_selected)
+    if PRINT_to_LOG:
+        print("******************************")
+        print("FIPS sélectionné :", fips_selected)
     default_val = []
     for i in range(3, len(input_ids)):
         default_val.append(areas[areas["fips"]==fips_selected][input_ids[i]].values[0])
-    print("Default values for FIPS selected", default_val)
+    if PRINT_to_LOG:
+        print("Default values for FIPS selected", default_val)
     return default_val
 
 # Gather all parameters, launch model prediction and trigger Result tab
@@ -464,7 +474,7 @@ def get_default_callback(fips_selected):
     inputs=[State(component_id=input_ids[0], component_property="value"),
     State(component_id=input_ids[1], component_property="value"),
     State(component_id=input_ids[2], component_property="value"),
-    
+
     # All 9 model parameters
     (State(component_id=input_ids[3], component_property="value"),
     State(component_id=input_ids[4], component_property="value"),
@@ -475,36 +485,39 @@ def get_default_callback(fips_selected):
     State(component_id=input_ids[9], component_property="value"),
     State(component_id=input_ids[10], component_property="value"),
     State(component_id=input_ids[11], component_property="value")),
-    
+
     State(component_id="tabs", component_property="active_tab"),
 
     Input(component_id="predict-button", component_property="n_clicks")],
 )
 def get_result_callback(state_selected, county_selected, fips_selected, input_values, active_tab, n_clicks):
-    print("******************************")
-    print("Etat sélectionné :", state_selected)
-    print("Comté sélectionné :", county_selected)
-    print("FIPS sélectionné :", fips_selected)
-    
+    if PRINT_to_LOG:
+        print("******************************")
+        print("Etat sélectionné :", state_selected)
+        print("Comté sélectionné :", county_selected)
+        print("FIPS sélectionné :", fips_selected)
+
     # Trigger a warning for blank state, county or FIPS
     invalid_state = (state_selected == None)
     invalid_county = (county_selected == None)
     invalid_fips = (fips_selected == None)
     if invalid_state or invalid_county or invalid_fips:
         return no_update, no_update, no_update, invalid_state, invalid_county, invalid_fips
-    
-    print("Valeurs retenues :", input_values)
+
+    if PRINT_to_LOG:
+        print("Valeurs retenues :", input_values)
     current_val = areas[areas["fips"]==fips_selected]["solar_panel_area_per_capita"].values[0]
     population = areas[areas["fips"]==fips_selected]["population"].values[0]
     prediction = load_model_and_predict("/var/www/deep_solar_app/data/Deep_Solar_model", input_values, input_ids)
     installed = int(current_val*population)
     target = int(prediction*population)
-        
-    print("******************************")
-    print("Inputs du CallBack :", dash.callback_context.states)
-    print("******************************")
-    print("Valeur courante de solar_panel_area_per_capita :", current_val)
-    print("Valeur prédite de solar_panel_area_per_capita :", prediction)
+
+    if PRINT_to_LOG:
+        print("******************************")
+        print("Inputs du CallBack :", dash.callback_context.states)
+        print("******************************")
+        print("Valeur courante de solar_panel_area_per_capita :", current_val)
+        print("Valeur prédite de solar_panel_area_per_capita :", prediction)
 
     prediction_element = [
             dbc.Row([html.P(f"Population dans cette zone : {population} habitants"),
@@ -513,7 +526,7 @@ def get_result_callback(state_selected, county_selected, fips_selected, input_va
             className="text-center",
             )
     ]
-    
+
     # Build conclusion depending on predicted value < or > installed base
     if target-installed >0:
         conclusion_element = [
@@ -522,7 +535,7 @@ def get_result_callback(state_selected, county_selected, fips_selected, input_va
     else:
         conclusion_element = [
             dbc.Row(html.H5(f"La surface déployée dépasse la valeur prévisible de {installed-target} m²."), className="text-center"),
-        ]        
+        ]
 
     prediction_text = prediction_element + conclusion_element
     prediction_figure = make_figure_from_prediction(installed, target)
@@ -531,4 +544,4 @@ def get_result_callback(state_selected, county_selected, fips_selected, input_va
 
 server = app.server
 if __name__ == '__main__':
-    app.run_server(debug=False, host='0.0.0.0', port='8050')
+    app.run_server(debug=False)
