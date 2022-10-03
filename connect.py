@@ -1,5 +1,5 @@
-# connect v1.4:
-#   absolute path for user_connect_db.sqlite
+# connect v1.5:
+#   edit greeting text
 
 from datetime import datetime
 
@@ -108,12 +108,13 @@ def get_greeting_text(name):
     register_new_connection(session, name)
     session.commit()
 
-    text1 = f"Bienvenue, {name} !\n\r"
+    text1 = f"Bonjour {name}"
 
     if last_date is None:
         text2 = "C'est votre première connexion."
     else:
         formatted_date = last_date.strftime("%d/%m/%Y à %H:%M:%S")
-        text2 = f"Votre dernière connexion a eu lieu le {formatted_date}."
+        text2 = f"Nous sommes heureux de vous revoir dans notre application. \
+                Votre dernière connexion a eu lieu le {formatted_date}."
     
     return text1, text2
