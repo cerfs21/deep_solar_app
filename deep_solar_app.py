@@ -1,5 +1,10 @@
-# deep_solar_app v3.5
-#   add app.title
+# deep_solar_app v3.6
+#   update application title
+#   edit text of home, connection and welcome tabs
+#   edit prediction sentence
+#   update column and picture visibility for medium screens 
+#   update Google Drive link
+#   edit comments
 
 #################
 # Import & Load #
@@ -22,7 +27,7 @@ from connect import get_greeting_text
 from visualize import make_figure_from_prediction
 
 # Load dataset from Google Drive
-file_url = 'https://drive.google.com/uc?id=1R7QpNyp_v0LebCJUbFv4F7m091GQVlek'
+file_url = 'https://drive.google.com/uc?id=1ArWXS9HW4QhtEJyQLQj3YqSZwPigmc2m'
 file_path = '/var/www/deep_solar_app/data/deepsolar_tract.csv'
 gdown.download(file_url, file_path, quiet=True, use_cookies=False)
 areas = pd.read_csv(file_path, encoding = "ISO-8859-1")
@@ -32,19 +37,14 @@ areas = pd.read_csv(file_path, encoding = "ISO-8859-1")
 # Declare dataset variables #
 #############################
 
-print("==============================")
-
-# Extract list of 49 states
+# Extract list of states
 states = areas["state"].unique()
-print(len(states),"états")
 
-# Extract list of 1843 counties
+# Extract list of counties
 counties = areas["county"].unique()
-print(len(counties),"comtés")
 
 # Extract list of FIPS codes
 fips = areas["fips"].unique()
-print(len(fips),"FIPS")
 
 # Create lists that will be used to manage Dash inputs
 # 1) List of model inputs
@@ -90,9 +90,12 @@ logo_and_title = dbc.Row(
             width=4,
         ),
         dbc.Col(
-            html.H1("Deep Solar App."),
+            [
+                html.H1("Deep Solar App.", style={"color": "blue"}),
+                html.H4("Géomarketing photovoltaïque", style={"color": "blue"}),
+            ],
             width=8,
-            className="text-left",
+            className="text-center",
         ),
     ],
     className="g-0 d-flex align-items-center mb-4",
@@ -169,7 +172,8 @@ tabs = dbc.Tabs([
         [
             dbc.Row(
                 [
-                    dbc.Col(html.H3("Assistant géomarketing pour le déploiement de panneaux solaires photovoltaïques."))
+                    dbc.Col(html.H5("Optimisez votre stratégie de déploiement de panneaux solaires photovoltaïques \
+                                    en ciblant les zones où le potentiel de croissance est le plus élevé."))
                 ],
                 className="mb-4",
             ),
@@ -178,9 +182,9 @@ tabs = dbc.Tabs([
                     dbc.Col(dbc.Card([
                         dbc.CardHeader(html.H4(f"Grâce à cette application vous pourrez..."), className="text-left pt-3"),
                         dbc.CardBody([
-                            html.H6(f"Obtenir des informations sur la base installée dans la région de votre choix"),
-                            html.H6(f"Prédire son potentiel d'évolution"),
-                            html.H6(f"Evaluer l'influence de certains paramètres sur ce potentiel"),
+                            html.H5(f"Obtenir des informations sur la base installée"),
+                            html.H5(f"Prédire son potentiel d'évolution"),
+                            html.H5(f"Evaluer l'influence des paramètres de prédiction"),
                         ]),
                     ])),
                 ],
@@ -204,6 +208,12 @@ tabs = dbc.Tabs([
         [
             dbc.Row(
                 [
+                    dbc.Col(html.H3("Connectez vous pour commencer l'expérience"))
+                ],
+                className="mb-4",
+            ),
+            dbc.Row(
+                [
                     dbc.Col(dbc.Input(id="name-box", placeholder="Entrez votre nom"), width=8),
                     # Bouton 'Se connecter"'
                     dbc.Col(
@@ -223,7 +233,7 @@ tabs = dbc.Tabs([
             dbc.Row(
                 [
                     dbc.Col(dbc.Card([
-                        dbc.CardBody(html.Div(id="welcome-box1")),
+                        dbc.CardHeader(html.H5(id="welcome-box1"), className="text-left pt-3"),
                         dbc.CardBody(html.Div(id="welcome-box2"))
                     ])),
                 ],
@@ -322,9 +332,9 @@ tabs = dbc.Tabs([
 ], id="tabs", className="mb-4")
 
 
-################################
-# Application interface layout #
-################################
+######################
+# Application layout #
+######################
 
 if HIDE_TABS:
     tabs.className += " d-none"
@@ -346,7 +356,8 @@ app.layout = dbc.Container([
                         ]
                     ),
                 ],
-                sm=12, lg=6,
+                # Half-display on medium and larger screens
+                sm=12, md=6,
             ),
 
             # Picture on right half of the screen
@@ -354,9 +365,11 @@ app.layout = dbc.Container([
                 html.Img(
                     src=dash.get_asset_url("solar_panels_on_ground.webp"),
                     style=dict(width="100%"),
-                    className="rounded-3 d-sm-none d-lg-block",
+                    # Picture visible on medium and larger screens only
+                    className="rounded-3 d-sm-none d-md-block",
                 ),
-                sm=0, lg=6,
+                # Column visible on medium and larger screens only
+                sm=0, md=6,
             )
         ],
         className="mt-4"
@@ -528,7 +541,7 @@ def get_result_callback(state_selected, county_selected, fips_selected, input_va
     # Build conclusion depending on predicted value < or > installed base
     if target-installed >0:
         conclusion_element = [
-            dbc.Row(html.H5(f"La surface à déployer pour atteindre la prédiction est {target-installed} m²."), className="text-center"),
+            dbc.Row(html.H5(f"La surface à déployer pour atteindre la prédiction est de {target-installed} m²."), className="text-center"),
         ]
     else:
         conclusion_element = [
