@@ -1,6 +1,5 @@
-# Deep_Solar_build_model v3.1
-#   add metric Mean Absolute Error
-#   perform unit tests with HistGradientBoostingRegressor
+# Deep_Solar_build_model v3.2
+#   update Random Forest and GridSearch optimization ranges
 
 # Import
 
@@ -300,7 +299,7 @@ print("HGB get_params :", HGB.get_params(deep=True))
 print("HGB n_iter :", HGB.n_iter_)
 
 #### Search interval for Evaluate GradientBoostingRegressor n_estimator
-n_min = 295
+n_min = 290
 n_max = 305
 print()
 print(f"Gradient Boosting Regressor pour n_estimator = {n_min}~{n_max} :")
@@ -357,7 +356,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 #### Search interval for n_estimator
 n_min = 70
-n_max = 90
+n_max = 100
 #### Search interval for max_depth and xGridSearchCV only
 d_min = 8
 d_max = 12
