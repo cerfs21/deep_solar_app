@@ -1,5 +1,6 @@
-# Deep_Solar_build_model v3.0
-#   English comments
+# Deep_Solar_build_model v3.1
+#   add metric Mean Absolute Error
+#   perform unit tests with HistGradientBoostingRegressor
 
 # Import
 
@@ -14,9 +15,10 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from collections import defaultdict, OrderedDict
 from sklearn.metrics import mean_squared_error as mse
+from sklearn.metrics import mean_absolute_error as mae
 
 ## Import dataset
-df_src = pd.read_csv('../data/deepsolar_tract.csv', encoding = "ISO-8859-1")
+df_src = pd.read_csv('./data/deepsolar_tract.csv', encoding = "ISO-8859-1")
 # encoding='utf-8', dtype({'fips':'str'})
 # Original dataset kept in df_src while working DataFrame is df
 df = df_src.copy()
@@ -75,7 +77,7 @@ solar_features.remove(target)
 features_removed = solar_features + geographical_features + political_features + education_features + race_features + age_features + misc_features
 df.drop(features_removed, axis=1, inplace=True)
 
-### Remove lines where data is incomplete 
+### Remove lines where data is incomplete
 df.replace([np.inf, -np.inf], np.nan, inplace=True) # inf values replaced with NaN
 df_target_noNaN = df.dropna(subset=[target])    # Create DataFrame excluding lines where target feature value is NaN
 df.dropna(inplace=True) # Remove lines where at least one feature value is NaN
@@ -139,7 +141,7 @@ X_sel = X[input_features]
 
 # Modelization
 
-## Get reproducible results in train_test_split and certain regression algorithms 
+## Get reproducible results in train_test_split and certain regression algorithms
 np.random.seed(14071789)
 
 ## Create train, val et test sets excluding NaN values
@@ -202,10 +204,14 @@ print("Linear Regression :")
 
 LinReg = LinearRegression()
 LinReg.fit(X_train_norm, y_train_norm)
-pred = LinReg.predict(X_val_norm)
+pred_train = LinReg.predict(X_train_norm)
+pred_val = LinReg.predict(X_val_norm)
 print("Score train :", LinReg.score(X_train_norm, y_train_norm))
-print("Score val :", LinReg.score(X_val_norm, y_val_norm))
-print("MSE val :", mse(y_val_norm,pred))
+print("Score val   :", LinReg.score(X_val_norm, y_val_norm))
+print("MAE   train :", mae(y_train_norm,pred_train))
+print("MAE   val   :", mae(y_val_norm,pred_val))
+print("MSE   train :", mse(y_train_norm,pred_train))
+print("MSE   val   :", mse(y_val_norm,pred_val))
 
 
 ### Evaluate Support Vector Regression (Radial Basis Function)
@@ -215,10 +221,14 @@ print("Support Vector Machines Regression (kernel = rbf) :")
 
 SVR_r = svm.SVR(kernel='rbf')
 SVR_r.fit(X_train_norm, np.ravel(y_train_norm))
-pred = SVR_r.predict(X_val_norm)
+pred_train = SVR_r.predict(X_train_norm)
+pred_val = SVR_r.predict(X_val_norm)
 print("Score train :",  SVR_r.score(X_train_norm, y_train_norm))
-print("Score val :", SVR_r.score(X_val_norm, y_val_norm))
-print("MSE val :", mse(y_val_norm,pred))
+print("Score val   :", SVR_r.score(X_val_norm, y_val_norm))
+print("MAE   train :", mae(y_train_norm,pred_train))
+print("MAE   val   :", mae(y_val_norm,pred_val))
+print("MSE   train :", mse(y_train_norm,pred_train))
+print("MSE   val   :", mse(y_val_norm,pred_val))
 
 
 ### Evaluate KNeighborsRegressor
@@ -230,6 +240,7 @@ n_max = 25
 print()
 print(f"K-Neighbors Regressor pour n_neighbors = {n_min}~{n_max} :")
 
+mae_list = []
 mse_list = []
 score_list = []
 K_better = 0
@@ -238,6 +249,7 @@ for K in tqdm(range(n_min, n_max+1)):
     KNR = KNeighborsRegressor(n_neighbors=K, n_jobs=-1)
     KNR.fit(X_train_norm, y_train_norm)
     pred = KNR.predict(X_val_norm)
+    mae_list.append(mae(y_val_norm,pred))
     mse_list.append(mse(y_val_norm,pred))
     score = KNR.score(X_val_norm, y_val_norm)
     score_list.append(score)
@@ -246,8 +258,9 @@ for K in tqdm(range(n_min, n_max+1)):
         K_better = K
 
 print("Meilleur KNR_n_neighbors :", K_better)
-print("Score val du meilleur KNR_n_neighbors :", score_list[K_better - n_min])
-print("MSE val du meilleur KNR_n_neighbors :", mse_list[K_better - n_min])
+print("Score val :", score_list[K_better - n_min])
+print("MAE   val :", mae_list[K_better - n_min])
+print("MSE   val :", mse_list[K_better - n_min])
 
 fig = plt.figure(figsize=(7,5))
 plt.title('Score val du modèle K-Neighbors Regressor', fontsize=16)
@@ -255,6 +268,13 @@ plt.xlabel('$n-neighbors$', fontsize=14)
 plt.ylabel('$Score$', fontsize=14)
 plt.plot([i for i in range(n_min,n_max+1)], score_list, markersize=6)
 plt.savefig('KNR_score_'+str(n_min)+'-'+str(n_max))
+plt.clf()
+
+plt.title('MAE val du modèle K-Neighbors Regressor', fontsize=16)
+plt.xlabel('$n-neighbors$', fontsize=14)
+plt.ylabel('$MAE$', fontsize=14)
+plt.plot([i for i in range(n_min,n_max+1)], mae_list, markersize=6)
+plt.savefig('KNR_mae_'+str(n_min)+'-'+str(n_max))
 plt.clf()
 
 plt.title('MSE val du modèle K-Neighbors Regressor', fontsize=16)
@@ -273,19 +293,20 @@ print()
 print(f"Hist Gradient Boosting Regressor :")
 HGB = HistGradientBoostingRegressor().fit(X_train_full, y_train_full)
 HGB.predict(X_val)
-print("Score train HGB :", HGB.score(X_train, y_train))
-print("Score val HGB :", HGB.score(X_val, y_val))
-print("MSE val HGB :", mse(HGB.predict(X_val), y_val))
+print("Score val   :", HGB.score(X_val, y_val))
+print("MAE   val   :", mae(HGB.predict(X_val), y_val))
+print("MSE   val   :", mse(HGB.predict(X_val), y_val))
 print("HGB get_params :", HGB.get_params(deep=True))
 print("HGB n_iter :", HGB.n_iter_)
 
 #### Search interval for Evaluate GradientBoostingRegressor n_estimator
-n_min = 190
-n_max = 210
+n_min = 295
+n_max = 305
 print()
 print(f"Gradient Boosting Regressor pour n_estimator = {n_min}~{n_max} :")
 
 #### Evaluate GradientBoostingRegressor by iteration over n_estimator
+mae_list = []
 mse_list = []
 score_list = []
 N_better = 0
@@ -294,6 +315,7 @@ for N in tqdm(range(n_min, n_max+1)):
     XGB = GradientBoostingRegressor(n_estimators=N)
     XGB.fit(X_train, y_train)
     pred = XGB.predict(X_val)
+    mae_list.append(mae(y_val,pred))
     mse_list.append(mse(y_val,pred))
     score = XGB.score(X_val, y_val)
     score_list.append(score)
@@ -303,8 +325,9 @@ for N in tqdm(range(n_min, n_max+1)):
         XGB_better = XGB
 
 print("Meilleur XGB_n_estimators :", N_better)
-print("Score val du meilleur XGB_n_estimators :", score_list[N_better - n_min])
-print("MSE val du meilleur XGB_n_estimators :", mse_list[N_better - n_min])
+print("Score val :", score_list[N_better - n_min])
+print("MAE   val :", mae_list[N_better - n_min])
+print("MSE   val :", mse_list[N_better - n_min])
 
 fig = plt.figure(figsize=(7,5))
 plt.title('Score val du modèle Gradient Boosting Regressor', fontsize=16)
@@ -312,6 +335,13 @@ plt.xlabel('$n-estimators$', fontsize=14)
 plt.ylabel('$Score$', fontsize=14)
 plt.plot([i for i in range(n_min,n_max+1)], score_list, markersize=6)
 plt.savefig('XGB_score_'+str(n_min)+'-'+str(n_max))
+plt.clf()
+
+plt.title('MAE val du modèle Gradient Boosting Regressor', fontsize=16)
+plt.xlabel('$n-estimators$', fontsize=14)
+plt.ylabel('$MAE$', fontsize=14)
+plt.plot([i for i in range(n_min,n_max+1)], mae_list, markersize=6)
+plt.savefig('XGB_mae_'+str(n_min)+'-'+str(n_max))
 plt.clf()
 
 plt.title('MSE val du modèle Gradient Boosting Regressor', fontsize=16)
@@ -346,12 +376,12 @@ print("Optimisation de n_estimators et max_depth avec HalvingGridSearchCV :")
 RFR_best_HG = HalvingGridSearchCV(gridsearch_model, gridsearch_params, factor=3, n_jobs=-1)
 RFR_best_HG.fit(X_train, y_train)
 RFR_best_HG.score(X_train, y_train)
-print("best_estimator HalvingGridSearchCV :", RFR_best_HG.best_estimator_)
-print("best_params HalvingGridSearchCV :", RFR_best_HG.best_params_)
-print("best_score HalvingGridSearchCV :", RFR_best_HG.best_score_)
-print("Score train HalvingGridSearchCV :", RFR_best_HG.score(X_train, y_train))
-print("Score val HalvingGridSearchCV :", RFR_best_HG.score(X_val, y_val))
-print("MSE val HalvingGridSearchCV :", mse(RFR_best_HG.predict(X_val), y_val))
+print("best_estimator :", RFR_best_HG.best_estimator_)
+print("best_params :", RFR_best_HG.best_params_)
+print("best_score  :", RFR_best_HG.best_score_)
+print("Score val   :", RFR_best_HG.score(X_val, y_val))
+print("MAE   val   :", mae(RFR_best_HG.predict(X_val), y_val))
+print("MSE   val   :", mse(RFR_best_HG.predict(X_val), y_val))
 
 #### Look for best n_estimators and max_depth using GridSearchCV
 from sklearn.model_selection import GridSearchCV
@@ -360,13 +390,13 @@ print("Optimisation de n_estimators et max_depth avec GridSearchCV :")
 RFR_best_GS = GridSearchCV(gridsearch_model, gridsearch_params, n_jobs=-1)
 RFR_best_GS.fit(X_train, y_train)
 RFR_best_GS.score(X_train, y_train)
-print("best_estimator GridSearchCV :", RFR_best_GS.best_estimator_)
-print("best_params GridSearchCV :", RFR_best_GS.best_params_)
-print("best_score GridSearchCV :", RFR_best_GS.best_score_)
+print("best_estimator :", RFR_best_GS.best_estimator_)
+print("best_params :", RFR_best_GS.best_params_)
+print("best_score  :", RFR_best_GS.best_score_)
 RFR_best_GS.predict(X_val)
-print("Score train GridSearchCV :", RFR_best_GS.score(X_train, y_train))
-print("Score val GridSearchCV :", RFR_best_GS.score(X_val, y_val))
-print("MSE val GridSearchCV :", mse(RFR_best_GS.predict(X_val), y_val))
+print("Score val   :", RFR_best_GS.score(X_val, y_val))
+print("MAE   val   :", mae(RFR_best_GS.predict(X_val), y_val))
+print("MSE   val   :", mse(RFR_best_GS.predict(X_val), y_val))
 
 #### Parameters for plotting GridSearchCV results
 x_GS = RFR_best_GS.cv_results_['param_max_depth']
@@ -398,6 +428,7 @@ plt.clf()
 print()
 print("Optimisation par simple itération sur n_estimators (max_depth indéterminé) :")
 
+mae_list = []
 mse_list = []
 score_list = []
 R_better = 0
@@ -406,6 +437,7 @@ for R in tqdm(range(n_min, n_max+1)):
     RFR = RandomForestRegressor(n_estimators=R, n_jobs=-1)
     RFR.fit(X_train, y_train)
     pred = RFR.predict(X_val)
+    mae_list.append(mae(y_val,pred))
     mse_list.append(mse(y_val,pred))
     score = RFR.score(X_val, y_val)
     score_list.append(score)
@@ -415,8 +447,9 @@ for R in tqdm(range(n_min, n_max+1)):
         RFR_better = RFR
 
 print("Meilleur RFR_n_estimator :", R_better)
-print("Score val du meilleur RFR_n_estimator :", score_list[R_better - n_min])
-print("MSE val du meilleur RFR_n_estimator :", mse_list[R_better - n_min])
+print("Score val :", score_list[R_better - n_min])
+print("MAE   val :", mae_list[R_better - n_min])
+print("MSE   val :", mse_list[R_better - n_min])
 
 fig = plt.figure(figsize=(7,5))
 plt.title('Score val du modèle Random Forest Regressor', fontsize=16)
@@ -424,6 +457,13 @@ plt.xlabel('$n-estimator$', fontsize=14)
 plt.ylabel('$Score$', fontsize=14)
 plt.plot([i for i in range(n_min,n_max+1)], score_list, markersize=6)
 plt.savefig('RFR_score_'+str(n_min)+'-'+str(n_max))
+plt.clf()
+
+plt.title('MAE val du modèle Random Forest Regressor', fontsize=16)
+plt.xlabel('$n-estimator$', fontsize=14)
+plt.ylabel('$MAE$', fontsize=14)
+plt.plot([i for i in range(n_min,n_max+1)], mae_list, markersize=6)
+plt.savefig('RFR_mae_'+str(n_min)+'-'+str(n_max))
 plt.clf()
 
 plt.title('MSE val du modèle Random Forest Regressor', fontsize=16)
@@ -436,7 +476,7 @@ plt.clf()
 
 # Final evaluation of best models
 
-##  Final evaluation of XGB 
+##  Final evaluation of XGB
 
 ### HistGradientBoostingRegressor model
 
@@ -445,18 +485,20 @@ print()
 print("*** Evaluation finale Histogram-based Gradient Boosting Regressor ***")
 print()
 HGB.fit(X_train_val, y_train_val)
-print("Score et Mean Square Error avec le jeu de test :")
+print("Score, Absolute et Mean Square Error avec le jeu de test :")
 pred = HGB.predict(X_test)
 print("Score test :", HGB.score(X_test, y_test))
-print("MSE test :", mse(y_test,pred))
+print("MAE   test :", mae(y_test,pred))
+print("MSE   test :", mse(y_test,pred))
 
 #### Train and evaluate on full selected dataset
 print()
-print("Score et Mean Square Error avec le jeu de données complet :")
+print("Score, Absolute et Mean Square Error avec le jeu de données complet :")
 HGB.fit(X_sel, y)
 pred = HGB.predict(X_sel)
 print("Score full :", HGB.score(X_sel, y))
-print("MSE full :", mse(y,pred))
+print("MAE   full :", mae(y,pred))
+print("MSE   full :", mse(y,pred))
 
 ### Best GradientBoostingRegressor model selected by iteration
 
@@ -465,19 +507,21 @@ print()
 print("*** Evaluation finale Gradient Boosting Regressor ***")
 print()
 XGB_better.fit(X_train_val, y_train_val)
-print("Score et Mean Square Error avec le jeu de test :")
+print("Score, Absolute et Mean Square Error avec le jeu de test :")
 pred = XGB_better.predict(X_test)
 print("Score test :", XGB_better.score(X_test, y_test))
-print("MSE test :", mse(y_test,pred))
+print("MAE   test :", mae(y_test,pred))
+print("MSE   test :", mse(y_test,pred))
 
 ### Train and evaluate on full selected dataset
 print()
-print("Score et Mean Square Error avec le jeu de données complet :")
+print("Score, Absolute et Mean Square Error avec le jeu de données complet :")
 XGB_full = GradientBoostingRegressor(n_estimators=N_better)
 XGB_full.fit(X_sel, y)
 pred = XGB_full.predict(X_sel)
 print("Score full :", XGB_full.score(X_sel, y))
-print("MSE full :", mse(y,pred))
+print("MAE   full :", mae(y,pred))
+print("MSE   full :", mse(y,pred))
 
 
 ## Final evaluation of RFR
@@ -488,19 +532,21 @@ print("MSE full :", mse(y,pred))
 print()
 print("*** Evaluation finale Random Forest Regressor sélectionné avec GridSearch ***")
 print()
-print("Score et Mean Square Error avec le jeu de test :")
+print("Score, Absolute et Mean Square Error avec le jeu de test :")
 RFR_best_GS.fit(X_train_val, y_train_val)
 pred = RFR_best_GS.predict(X_test)
 print("Score test :", RFR_best_GS.score(X_test, y_test))
-print("MSE test :", mse(y_test,pred))
+print("MAE   test :", mae(y_test,pred))
+print("MSE   test :", mse(y_test,pred))
 
 #### Train and evaluate on full selected dataset
 print()
-print("Score et Mean Square Error avec le jeu de données complet :")
+print("Score, Absolute et Mean Square Error avec le jeu de données complet :")
 RFR_best_GS.fit(X_sel, y)
 pred = RFR_best_GS.predict(X_sel)
 print("Score full :", RFR_best_GS.score(X_sel, y))
-print("MSE full :", mse(y,pred))
+print("MAE   full :", mae(y,pred))
+print("MSE   full :", mse(y,pred))
 
 ### Best RFR model selected by iteration
 
@@ -508,19 +554,21 @@ print("MSE full :", mse(y,pred))
 print()
 print("*** Evaluation finale Random Forest Regressor sélectionné par simple itération sur n_estimators ***")
 print()
-print("Score et Mean Square Error avec le jeu de test :")
+print("Score, Absolute et Mean Square Error avec le jeu de test :")
 RFR_better.fit(X_train_val, y_train_val)
 pred = RFR_better.predict(X_test)
 print("Score test :", RFR_better.score(X_test, y_test))
-print("MSE test :", mse(y_test,pred))
+print("MAE   test :", mae(y_test,pred))
+print("MSE   test :", mse(y_test,pred))
 
 #### Train and evaluate on full selected dataset
 print()
-print("Score et Mean Square Error avec le jeu de données complet :")
+print("Score, Absolute et Mean Square Error avec le jeu de données complet :")
 RFR_better.fit(X_sel, y)
 pred = RFR_better.predict(X_sel)
 print("Score full :", RFR_better.score(X_sel, y))
-print("MSE full :", mse(y,pred))
+print("MAE   full :", mae(y,pred))
+print("MSE   full :", mse(y,pred))
 
 
 ### Backup model files trained on full selected dataset
@@ -537,15 +585,15 @@ pickle.dump(RFR_better, open("Deep_Solar_model_RFR_iter", 'wb'))
 print("Taille du modèle RandomForestRegressor sélectionné par itération :", round(os.path.getsize("Deep_Solar_model_RFR_iter")/2**20), "Mo")
 
 
-### Unit tests on best RFR model selected with GridSearch
+### Unit tests on best regressin model: HistGradientBoostingRegressor
 print()
-print("*** Tests unitaires du meilleur modèle RFR sélectionné avec GridSearch ***")
+print("*** Tests unitaires avec le modèle retenu : HistGradientBoostingRegressor ***")
 random_lines = np.random.randint(2, 63845, 3)
 for test, line in zip(range(1,4), random_lines):
     raw = X_sel.iloc[line].to_list()
     input_df = pd.DataFrame(raw).transpose()
     input_df.columns = input_features
-    pred = RFR_best_GS.predict(input_df)[0]
+    pred = HGB.predict(input_df)[0]
     print()
     print("Test unitaire", test, ":")
     print("Input :", raw)
