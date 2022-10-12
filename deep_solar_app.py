@@ -1,10 +1,12 @@
-# deep_solar_app v3.6
-#   update application title
-#   edit text of home, connection and welcome tabs
-#   edit prediction sentence
-#   update column and picture visibility for medium screens 
-#   update Google Drive link
-#   edit comments
+# deep_solar_app v3.7
+#   give home page some space and bullet points
+#   change some text color and add background image to match application mockup
+#   update layout and text format in various places
+#   use dbcCard on all tabs (except parameters) to get consistent appearance accross the application
+#   move get_greeting_text function from connect to main module to gather all apperance settings in main
+#   update and reshape greeting text messages
+#   restore Google Drive link to get full dataset
+#   add comments on instructions in charge of application layout
 
 #################
 # Import & Load #
@@ -23,11 +25,11 @@ from dash_extensions.enrich import Output, DashProxy, Input, State, MultiplexerT
 from dash.exceptions import PreventUpdate
 
 from predict import load_model_and_predict
-from connect import get_greeting_text
+from connect import create_session, get_last_connection_date, register_new_connection
 from visualize import make_figure_from_prediction
 
 # Load dataset from Google Drive
-file_url = 'https://drive.google.com/uc?id=1ArWXS9HW4QhtEJyQLQj3YqSZwPigmc2m'
+file_url = 'https://drive.google.com/uc?id=1R7QpNyp_v0LebCJUbFv4F7m091GQVlek'
 file_path = '/var/www/deep_solar_app/data/deepsolar_tract.csv'
 gdown.download(file_url, file_path, quiet=True, use_cookies=False)
 areas = pd.read_csv(file_path, encoding = "ISO-8859-1")
@@ -71,6 +73,27 @@ input_notes =   ["choisissez un état des USA", "choisissez un comté dans cet �
 # Declare Dash variables and functions #
 ########################################
 
+# Function to determine greeting text on user connection
+def get_greeting_text(name):
+    session = create_session()
+    last_date = get_last_connection_date(session, name)
+    register_new_connection(session, name)
+    session.commit()
+
+    if last_date is None:
+        text1 = f"Bonjour {name}"
+        text2 = "Bienvenue dans notre application !"
+    else:
+        formatted_date = last_date.strftime("%d/%m/%Y à %H:%M:%S")
+        text1 = f"Bonjour {name}, vous êtes de retour !"
+        text2 = [
+                    "Nous sommes heureux de vous revoir.",
+                    html.Br(),
+                    f"Votre dernière connexion a eu lieu le {formatted_date}."
+                ]
+    return text1, text2
+
+# Global parameters for Dash
 app = DashProxy(
     __name__,
     prevent_initial_callbacks=True,
@@ -91,14 +114,15 @@ logo_and_title = dbc.Row(
         ),
         dbc.Col(
             [
-                html.H1("Deep Solar App.", style={"color": "blue"}),
+                html.H1("Deep Solar App.", style={"color": "orange"}),
                 html.H4("Géomarketing photovoltaïque", style={"color": "blue"}),
             ],
             width=8,
             className="text-center",
         ),
     ],
-    className="g-0 d-flex align-items-center mb-4",
+    # Use flexible display and make zero gap between columns
+    className="d-flex g-0 align-items-center mb-4",
 )
 
 # Home button managed by HIDE_HOME_BUTTON
@@ -172,20 +196,32 @@ tabs = dbc.Tabs([
         [
             dbc.Row(
                 [
-                    dbc.Col(html.H5("Optimisez votre stratégie de déploiement de panneaux solaires photovoltaïques \
-                                    en ciblant les zones où le potentiel de croissance est le plus élevé."))
+                    dbc.Col(
+                        html.H5("Optimisez votre stratégie de déploiement de panneaux solaires photovoltaïques \
+                                en ciblant les zones où le potentiel de croissance est le plus élevé."),
+                        style={'text-align': 'justify'}
+                    )
                 ],
-                className="mb-4",
+                className="mt-4 mb-5",
             ),
             dbc.Row(
                 [
-                    dbc.Col(dbc.Card([
-                        dbc.CardHeader(html.H4(f"Grâce à cette application vous pourrez..."), className="text-left pt-3"),
+                    dbc.Col(
+                        dbc.Card([
+                            dbc.CardHeader(
+                                html.H5(f"Grâce à cette application vous pourrez..."),
+                                style={"color": "blue"},
+                                className="text-left pt-3"),
                         dbc.CardBody([
-                            html.H5(f"Obtenir des informations sur la base installée"),
-                            html.H5(f"Prédire son potentiel d'évolution"),
-                            html.H5(f"Evaluer l'influence des paramètres de prédiction"),
-                        ]),
+                            dcc.Markdown('''
+                                + Obtenir des informations sur la base installée
+                                + Prédire son potentiel d'évolution
+                                + Evaluer l'influence des paramètres de prédiction
+                            '''),
+                        ],
+                        style={'fontSize': '1.2em', 'font-weight': '500', 'margin-left': '-0.6em', 'padding-top': '1.2em'},
+                        className="text-left",
+                        ),
                     ])),
                 ],
                 className="mb-4",
@@ -193,11 +229,9 @@ tabs = dbc.Tabs([
             dbc.Row(
                 [
                     # Bouton 'Commencer'
-                    dbc.Col(
-                        buttons[0],
-                        className="mb-2",
-                    ),
-                ]
+                    dbc.Col(buttons[0]),
+                ],
+                className="mb-4",
             ),
         ],
         label="Accueil"
@@ -208,21 +242,33 @@ tabs = dbc.Tabs([
         [
             dbc.Row(
                 [
-                    dbc.Col(html.H3("Connectez vous pour commencer l'expérience"))
+                    dbc.Col(
+                        dbc.Card([
+                            dbc.CardHeader(
+                                html.H5("Connectez vous pour commencer l'expérience",
+                                    style={"color": "blue"},
+                                    className="text-left pt-1")
+                            ),
+                            dbc.CardBody([
+                                html.P(
+                                    [
+                                        dbc.Input(id="name-box", placeholder="Entrez votre nom"),
+                                    ],
+                                    className="mt-2 mb-2"
+                                ),
+                            ])
+                        ])
+                    )
                 ],
-                className="mb-4",
+            className="mb-4",
             ),
             dbc.Row(
                 [
-                    dbc.Col(dbc.Input(id="name-box", placeholder="Entrez votre nom"), width=8),
-                    # Bouton 'Se connecter"'
-                    dbc.Col(
-                        buttons[1],
-                        width=4,
-                        className="mb-2",
-                    )
-                ]
-            ),
+                    # Bouton 'Se connecter'
+                    dbc.Col(buttons[1]),
+                ],
+                className="mb-4",
+            )
         ],
         label="Connexion"
     ),
@@ -233,8 +279,16 @@ tabs = dbc.Tabs([
             dbc.Row(
                 [
                     dbc.Col(dbc.Card([
-                        dbc.CardHeader(html.H5(id="welcome-box1"), className="text-left pt-3"),
-                        dbc.CardBody(html.Div(id="welcome-box2"))
+                        dbc.CardHeader(
+                            html.H5(id="welcome-box1"),
+                            style={"color": "blue"},
+                            className="card-title text-left pt-3",
+                        ),
+                        dbc.CardBody(
+                            html.P(id="welcome-box2"),
+                            style={'fontSize': '1.1em', 'font-weight': '400'},
+                            className="card-text text-left pt-4",
+                        ),
                     ])),
                 ],
                 className="mb-4",
@@ -243,7 +297,7 @@ tabs = dbc.Tabs([
                 # Bouton 'Lancer l'application'
                 dbc.Col(
                     buttons[2],
-                    className="text-center mb-2",
+                    className="text-left mb-2",
                 )
             ])
         ],
@@ -256,7 +310,10 @@ tabs = dbc.Tabs([
         [
             dbc.Form(
                 [
-                    html.H5("Sélectionnez une zone (état + comté + FIPS), puis modifiez les paramètres courants de cette zone si vous le souhaitez.", className="mb-4"),
+                    html.H5(
+                        "Sélectionnez une zone (état + comté + FIPS), puis modifiez les paramètres courants de cette zone si vous le souhaitez.",
+                        style={"color": "blue"},
+                        className="mb-4"),
                     html.Div(
                         [
                             # Saisie de l'état
@@ -303,14 +360,20 @@ tabs = dbc.Tabs([
                 [
                     dbc.Col(
                         dbc.Card([
-                            dbc.CardHeader(html.H5(f"Valeurs courantes et prédictions"), className="text-center pt-3"),
+                            dbc.CardHeader(
+                                html.H5(f"Valeurs courantes et prédictions"),
+                                style={"color": "blue"},
+                                className="text-center pt-3"),
                             dbc.CardBody(id="prediction-card")
                         ]),
                         className="mb-2",
                     ),
                     dbc.Col(
                         dbc.Card([
-                            dbc.CardHeader(html.H5(f"Comparaison graphique"), className="text-center pt-3"),
+                            dbc.CardHeader(
+                                html.H5(f"Comparaison graphique"),
+                                style={"color": "blue"},
+                                className="text-center pt-3"),
                             dbc.CardBody(dcc.Graph(id="prediction-graph")),
                         ]),
                         className="mb-2"
@@ -343,9 +406,10 @@ if HIDE_HOME_BUTTON:
     home_button.className += " d-none"
 
 app.layout = dbc.Container([
+    # Full screen = 1 row
     dbc.Row(
         [
-            # Tabs on left half of the screen
+            # Left half of screen = 1st Col showing app header and tabs
             dbc.Col(
                 [
                     logo_and_title,
@@ -356,21 +420,27 @@ app.layout = dbc.Container([
                         ]
                     ),
                 ],
-                # Half-display on medium and larger screens
-                sm=12, md=6,
+                # 12/12 = full screen on small and medium displays
+                sm=12,
+                # 6/12 = half of screen on large and extra-large displays
+                lg=6,
             ),
 
-            # Picture on right half of the screen
+            # Right half of the screen = 2nd Col showing image
             dbc.Col(
                 html.Img(
                     src=dash.get_asset_url("solar_panels_on_ground.webp"),
-                    style=dict(width="100%"),
-                    # Picture visible on medium and larger screens only
-                    className="rounded-3 d-sm-none d-md-block",
+                    style={'width': '80%'},
+                    # Picture shown on large and extra-large displays only
+                    className="d-sm-none d-lg-block mt-4 mb-4",
                 ),
-                # Column visible on medium and larger screens only
-                sm=0, md=6,
-            )
+                # 0/12 = column not shown on small and medium displays
+                sm=0,
+                # 6/12 = half of screen on large and extra-large displays
+                lg=6,
+                style={'background-image': 'url(/assets/rectangle_blue_bubbles.webp)'},
+                className="d-flex align-items-center",
+            ),
         ],
         className="mt-4"
     ),
@@ -541,11 +611,19 @@ def get_result_callback(state_selected, county_selected, fips_selected, input_va
     # Build conclusion depending on predicted value < or > installed base
     if target-installed >0:
         conclusion_element = [
-            dbc.Row(html.H5(f"La surface à déployer pour atteindre la prédiction est de {target-installed} m²."), className="text-center"),
+            dbc.Row(
+                html.H4(f"La surface à déployer pour atteindre la prédiction est de {target-installed} m²."),
+                style={"color": "darkorange"},
+                className="text-center",
+            )
         ]
     else:
         conclusion_element = [
-            dbc.Row(html.H5(f"La surface déployée dépasse la valeur prévisible de {installed-target} m²."), className="text-center"),
+            dbc.Row(
+                html.H4(f"La surface déployée dépasse la valeur prévisible de {installed-target} m²."),
+                style={"color": "darkorange"},
+                className="text-center",
+            )
         ]
 
     prediction_text = prediction_element + conclusion_element
