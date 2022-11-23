@@ -1,5 +1,5 @@
-# deep_solar_app v3.8
-#   update file paths
+# deep_solar_app v3.9
+#   fix Deep_Solar_model file path
 
 #################
 # Import & Load #
@@ -582,7 +582,7 @@ def get_result_callback(state_selected, county_selected, fips_selected, input_va
         print("Valeurs retenues :", input_values)
     current_val = areas[areas["fips"]==fips_selected]["solar_panel_area_per_capita"].values[0]
     population = areas[areas["fips"]==fips_selected]["population"].values[0]
-    prediction = load_model_and_predict("/var/www/deep-app/data/Deep_Solar_model", input_values, input_ids)
+    prediction = load_model_and_predict("/var/www/deep-solar/data/Deep_Solar_model", input_values, input_ids)
     installed = int(current_val*population)
     target = int(prediction*population)
 
