@@ -1,5 +1,5 @@
-# connect v1.6:
-#   move get_greeting_text function to main module to gather all apperance settings in the same place
+# connect v1.7:
+#   update file path
 
 from datetime import datetime
 
@@ -44,7 +44,7 @@ class Connection(Base):
        return f"Connection({self.user.name} at {self.date})"
 
 
-def create_session(path="/var/www/deep_solar_app/data/user_connect_db.sqlite"):
+def create_session(path="/var/www/deep-solar/data/user_connect_db.sqlite"):
     engine = create_engine(f"sqlite:///{path}", echo=False)
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)

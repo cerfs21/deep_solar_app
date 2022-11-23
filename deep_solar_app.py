@@ -1,12 +1,5 @@
-# deep_solar_app v3.7
-#   give home page some space and bullet points
-#   change some text color and add background image to match application mockup
-#   update layout and text format in various places
-#   use dbcCard on all tabs (except parameters) to get consistent appearance accross the application
-#   move get_greeting_text function from connect to main module to gather all apperance settings in main
-#   update and reshape greeting text messages
-#   restore Google Drive link to get full dataset
-#   add comments on instructions in charge of application layout
+# deep_solar_app v3.8
+#   update file paths
 
 #################
 # Import & Load #
@@ -30,7 +23,7 @@ from visualize import make_figure_from_prediction
 
 # Load dataset from Google Drive
 file_url = 'https://drive.google.com/uc?id=1R7QpNyp_v0LebCJUbFv4F7m091GQVlek'
-file_path = '/var/www/deep_solar_app/data/deepsolar_tract.csv'
+file_path = '/var/www/deep-solar/data/deepsolar_tract.csv'
 gdown.download(file_url, file_path, quiet=True, use_cookies=False)
 areas = pd.read_csv(file_path, encoding = "ISO-8859-1")
 
@@ -589,7 +582,7 @@ def get_result_callback(state_selected, county_selected, fips_selected, input_va
         print("Valeurs retenues :", input_values)
     current_val = areas[areas["fips"]==fips_selected]["solar_panel_area_per_capita"].values[0]
     population = areas[areas["fips"]==fips_selected]["population"].values[0]
-    prediction = load_model_and_predict("/var/www/deep_solar_app/data/Deep_Solar_model", input_values, input_ids)
+    prediction = load_model_and_predict("/var/www/deep-app/data/Deep_Solar_model", input_values, input_ids)
     installed = int(current_val*population)
     target = int(prediction*population)
 
