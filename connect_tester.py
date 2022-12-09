@@ -1,14 +1,20 @@
-# connect_tester v1.0:
-#   initial release to check connection to SQLite database
+# connect_tester v1.1:
+#   create application path as a argument of create_session
+
+'''
+Unit test to check connection to SQLite database
+'''
 
 from datetime import datetime
 from connect import create_session, get_last_connection_date, register_new_connection
+
+app_path = '/var/www/deep-solar/'
 
 def test_last_connection_date():
     start_date = datetime.now()
     name = "Test"
 
-    session = create_session()
+    session = create_session(app_path)
     register_new_connection(session, name)
     last_date = get_last_connection_date(session, name)
 

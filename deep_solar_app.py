@@ -1,5 +1,5 @@
-# deep_solar_app v3.9
-#   fix Deep_Solar_model file path
+# deep_solar_app v3.10
+#   change file sourcing and path management
 
 #################
 # Import & Load #
@@ -21,11 +21,10 @@ from predict import load_model_and_predict
 from connect import create_session, get_last_connection_date, register_new_connection
 from visualize import make_figure_from_prediction
 
-# Load dataset from Google Drive
-file_url = 'https://drive.google.com/uc?id=1R7QpNyp_v0LebCJUbFv4F7m091GQVlek'
-file_path = '/var/www/deep-solar/data/deepsolar_tract.csv'
-gdown.download(file_url, file_path, quiet=True, use_cookies=False)
-areas = pd.read_csv(file_path, encoding = "ISO-8859-1")
+# Set application path and load data(sub)set
+app_path = '/var/www/deep-solar/'
+file_path = 'data/Deep_Solar_app_data.csv'
+areas = pd.read_csv(app_path+file_path, encoding = "ISO-8859-1")
 
 
 #############################
@@ -68,7 +67,7 @@ input_notes =   ["choisissez un état des USA", "choisissez un comté dans cet �
 
 # Function to determine greeting text on user connection
 def get_greeting_text(name):
-    session = create_session()
+    session = create_session(app_path)
     last_date = get_last_connection_date(session, name)
     register_new_connection(session, name)
     session.commit()
@@ -582,7 +581,7 @@ def get_result_callback(state_selected, county_selected, fips_selected, input_va
         print("Valeurs retenues :", input_values)
     current_val = areas[areas["fips"]==fips_selected]["solar_panel_area_per_capita"].values[0]
     population = areas[areas["fips"]==fips_selected]["population"].values[0]
-    prediction = load_model_and_predict("/var/www/deep-solar/data/Deep_Solar_model", input_values, input_ids)
+    prediction = load_model_and_predict(app_path+'data/Deep_Solar_model', input_values, input_ids)
     installed = int(current_val*population)
     target = int(prediction*population)
 
