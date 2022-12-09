@@ -12,6 +12,6 @@ The project is carried out in two phases:
 1) Select and build the best Machine Learning model to predict a target feature (solar panel area per capita) given a limited number of input features selected with Lasso. The resulting model happens to be an Hist-Gradient Boosting Regressor. For better performance, the computation to evaluate different regression models is executed within an Intel container optimized for Machine Learning[^third]. 
 2) Develop a web application to perform the functions listed above. The front-end is built on Dash to provide a responsive user interface. The back-end tasks mainly consists in getting user input and invoking the ML model to compute a prediction, while the connection log is based on SQLAlchemy and SQLite.
 
-[^first]: Deep Solar App. : https://deep-solar.cerfs21.fr/
-[^second]: DeepSolar Dataset | Kaggle : https://www.kaggle.com/datasets/tunguz/deep-solar-dataset
-[^third]: Intel/Intel-optimized-ML - Docker Image : https://hub.docker.com/r/intel/intel-optimized-ml
+[^first]: Deep Solar App. accessible on French working days/hours: https://deep-solar.cerfs21.fr/
+[^second]: DeepSolar Dataset | Kaggle: https://www.kaggle.com/datasets/tunguz/deep-solar-dataset
+[^third]: Intel/Intel-optimized-ML | Docker Image: https://hub.docker.com/r/intel/intel-optimized-ml
