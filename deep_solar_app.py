@@ -8,7 +8,6 @@
 # Import Python librairies
 import numpy as np
 import pandas as pd
-import gdown
 
 import dash
 import dash_bootstrap_components as dbc
