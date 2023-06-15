@@ -1,5 +1,5 @@
-# deep_solar_app v3.10
-#   change file sourcing and path management
+# deep_solar_app v3.11
+#   remove gdown while sourcing application files locally
 
 #################
 # Import & Load #

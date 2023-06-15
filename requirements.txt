@@ -1,9 +1,12 @@
 dash
 dash_bootstrap_components
 dash_extensions
-gdown
+matplotlib
 numpy
 pandas
-scikit-learn=1.1.2
+plotly
+scikit-learn
+seaborn
 sqlalchemy
 testresources
+tqdm
