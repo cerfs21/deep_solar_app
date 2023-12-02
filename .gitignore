@@ -1,3 +1,4 @@
 __pycache__/
+.python-version
 data/user_connect_db.sqlite
 data/deepsolar_tract.csv
