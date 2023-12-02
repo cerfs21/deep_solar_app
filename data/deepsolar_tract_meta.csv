@@ -1,0 +1,169 @@
+column_name,explanation,source
+tile_count,number of image tiles containing solar power system,deepsolar
+solar_system_count,number of solar power systems (after merging),deepsolar
+total_panel_area,total area of solar panels (m^2),deepsolar
+fips,census tract FIPS number,ACS 2015 (5-Year Estimates)
+average_household_income,average annual houshold income ($),ACS 2015 (5-Year Estimates)
+county,county name,ACS 2015 (5-Year Estimates)
+education_bachelor,number of bachelor level people (as highest degree) after 25 years old,ACS 2015 (5-Year Estimates)
+education_college,number of college level people (as highest degree) after 25 years old,ACS 2015 (5-Year Estimates)
+education_doctoral,number of doctoral level people (as highest degree) after 25 years old,ACS 2015 (5-Year Estimates)
+education_high_school_graduate,number of high school graduate level people  (as highest degree) after 25 years old,ACS 2015 (5-Year Estimates)
+education_less_than_high_school,number of less than high school level people after 25 years old,ACS 2015 (5-Year Estimates)
+education_master,number of master level people (as highest degree) after 25 years old,ACS 2015 (5-Year Estimates)
+education_population,total population of 25 years old and over,ACS 2015 (5-Year Estimates)
+education_professional_school,number of professional school level people (as highest degree) after 25 years old,ACS 2015 (5-Year Estimates)
+employed,number of employed people,ACS 2015 (5-Year Estimates)
+gini_index,gini index,ACS 2015 (5-Year Estimates)
+heating_fuel_coal_coke,number of house units using coal/coke/wood as heating fuel ,ACS 2015 (5-Year Estimates)
+heating_fuel_electricity,number of house units using electricity as heating fuel ,ACS 2015 (5-Year Estimates)
+heating_fuel_fuel_oil_kerosene,number of house units using fuel/oil/kerosene as heating fuel,ACS 2015 (5-Year Estimates)
+heating_fuel_gas,number of house units using gas as heating fuel,ACS 2015 (5-Year Estimates)
+heating_fuel_housing_unit_count,total number of occupied housing units,ACS 2015 (5-Year Estimates)
+heating_fuel_none,number of house units using no heating fuel,ACS 2015 (5-Year Estimates)
+heating_fuel_other,number of house units using other resources as heating fuel,ACS 2015 (5-Year Estimates)
+heating_fuel_solar,number of house units using solar energy as heating fuel,ACS 2015 (5-Year Estimates)
+land_area,total land area (mile^2),ACS 2015 (5-Year Estimates)
+per_capita_income,per capita annual income ($),ACS 2015 (5-Year Estimates)
+population,total population,ACS 2015 (5-Year Estimates)
+population_density,population density (/mile^2),ACS 2015 (5-Year Estimates)
+poverty_family_below_poverty_level,number of poverty families below poverty level,ACS 2015 (5-Year Estimates)
+poverty_family_count,number of families,ACS 2015 (5-Year Estimates)
+race_asian,number of Asians,ACS 2015 (5-Year Estimates)
+race_black_africa,number of black or African Americans,ACS 2015 (5-Year Estimates)
+race_indian_alaska,number of American Indians and Alaska natives,ACS 2015 (5-Year Estimates)
+race_islander,number of native Hawaiians and other Pacific islanders,ACS 2015 (5-Year Estimates)
+race_other,number of people of other races,ACS 2015 (5-Year Estimates)
+race_two_more,number of people with two or more races,ACS 2015 (5-Year Estimates)
+race_white,number of whites,ACS 2015 (5-Year Estimates)
+state,state name,ACS 2015 (5-Year Estimates)
+total_area,total area (mile^2),ACS 2015 (5-Year Estimates)
+unemployed,number of unemployed people,ACS 2015 (5-Year Estimates)
+water_area,total water area (mile^2),ACS 2015 (5-Year Estimates)
+education_less_than_high_school_rate,ratio of less than high school level people after 25 years old,ACS 2015 (5-Year Estimates)
+education_high_school_graduate_rate,ratio of high school graduate level people  (as highest degree) after 25 years old,ACS 2015 (5-Year Estimates)
+education_college_rate,ratio of college level people (as highest degree) after 25 years old,ACS 2015 (5-Year Estimates)
+education_bachelor_rate,ratio of bachelor level people (as highest degree) after 25 years old,ACS 2015 (5-Year Estimates)
+education_master_rate,ratio of master level people (as highest degree) after 25 years old,ACS 2015 (5-Year Estimates)
+education_professional_school_rate,ratio of professional school level people (as highest degree) after 25 years old,ACS 2015 (5-Year Estimates)
+education_doctoral_rate,ratio of doctoral level people (as highest degree) after 25 years old,ACS 2015 (5-Year Estimates)
+race_white_rate,ratio of whites,ACS 2015 (5-Year Estimates)
+race_black_africa_rate,ratio of black or African Americans,ACS 2015 (5-Year Estimates)
+race_indian_alaska_rate,ratio of American Indians and Alaska natives,ACS 2015 (5-Year Estimates)
+race_asian_rate,ratio of Asians,ACS 2015 (5-Year Estimates)
+race_islander_rate,ratio of native Hawaiians and other Pacific islanders,ACS 2015 (5-Year Estimates)
+race_other_rate,ratio of people of other races,ACS 2015 (5-Year Estimates)
+race_two_more_rate,raio of people with two or more races,ACS 2015 (5-Year Estimates)
+employ_rate,empoyment rate,ACS 2015 (5-Year Estimates)
+poverty_family_below_poverty_level_rate,ratio of people with two or more races,ACS 2015 (5-Year Estimates)
+heating_fuel_gas_rate,ratio of house units using gas as heating fuel,ACS 2015 (5-Year Estimates)
+heating_fuel_electricity_rate,ratio of house units using electricity as heating fuel ,ACS 2015 (5-Year Estimates)
+heating_fuel_fuel_oil_kerosene_rate,ratio of house units using fuel/oil/kerosene as heating fuel,ACS 2015 (5-Year Estimates)
+heating_fuel_coal_coke_rate,ratio of house units using coal/coke/wood as heating fuel ,ACS 2015 (5-Year Estimates)
+heating_fuel_solar_rate,ratio of house units using solar energy as heating fuel,ACS 2015 (5-Year Estimates)
+heating_fuel_other_rate,ratio of house units using other resources as heating fuel,ACS 2015 (5-Year Estimates)
+heating_fuel_none_rate,ratio of house units using no heating fuel,ACS 2015 (5-Year Estimates)
+solar_panel_area_divided_by_area,solar panel area divided by total area (m^2/mile^2),deepsolar
+solar_panel_area_per_capita,solar panel area per capita (m^2/capita),deepsolar
+tile_count_residential,number of image tiles containing residential solar power system,deepsolar
+tile_count_nonresidential,number of image tiles containing non-residential solar power system,deepsolar
+solar_system_count_residential,number of residential solar power systems (after merging),deepsolar
+solar_system_count_nonresidential,number of non-residential solar power systems (after merging),deepsolar
+total_panel_area_residential,total area of residential solar panels (m^2),deepsolar
+total_panel_area_nonresidential,total area of non-residential solar panels (m^2),deepsolar
+median_household_income,median annual houshold income ($),ACS 2015 (5-Year Estimates)
+electricity_price_residential,average residential electricity price (cents/kWh),EIA 2015
+electricity_price_commercial,average commercial electricity price (cents/kWh),EIA 2015
+electricity_price_industrial,average industrial electricity price (cents/kWh),EIA 2015
+electricity_price_transportation,average transportation electricity price (cents/kWh),EIA 2015
+electricity_price_overall,average overall electricity price (cents/kWh),EIA 2015
+electricity_consume_residential,average monthly residential electricity consumption (kWh),EIA 2015
+electricity_consume_commercial,average monthly commercial electricity consumption (kWh),EIA 2015
+electricity_consume_industrial,average monthly industrial electricity consumption (kWh),EIA 2015
+electricity_consume_total,average monthly total electricity consumption (kWh),EIA 2015
+household_count,total number of households,ACS 2015 (5-Year Estimates)
+average_household_size,average household size,ACS 2015 (5-Year Estimates)
+housing_unit_count,total number of housing units,ACS 2015 (5-Year Estimates)
+housing_unit_occupied_count,total number of occupied housing units,ACS 2015 (5-Year Estimates)
+housing_unit_median_value,median housing unit value ($),ACS 2015 (5-Year Estimates)
+housing_unit_median_gross_rent,median housing unit gross rent ($),ACS 2015 (5-Year Estimates)
+lat,centroid latitude,NASA Surface Meteorology and Solar Energy
+lon,centroid longitude,NASA Surface Meteorology and Solar Energy
+elevation,elevation,NASA Surface Meteorology and Solar Energy
+heating_design_temperature,heating design temperature (celsius),NASA Surface Meteorology and Solar Energy
+cooling_design_temperature,cooling design temperature (celsius),NASA Surface Meteorology and Solar Energy
+earth_temperature_amplitude,earth temperature amplitude (celsius),NASA Surface Meteorology and Solar Energy
+frost_days,number of frost days,NASA Surface Meteorology and Solar Energy
+air_temperature,air temperature (celsius),NASA Surface Meteorology and Solar Energy
+relative_humidity,relative humidity,NASA Surface Meteorology and Solar Energy
+daily_solar_radiation,daily solar radiation (kWh/m^2/d),NASA Surface Meteorology and Solar Energy
+atmospheric_pressure,atmospheric pressure,NASA Surface Meteorology and Solar Energy
+wind_speed,wind speed,NASA Surface Meteorology and Solar Energy
+earth_temperature,earth temperature (celsius),NASA Surface Meteorology and Solar Energy
+heating_degree_days,heating degree days,NASA Surface Meteorology and Solar Energy
+cooling_degree_days,cooling degree days,NASA Surface Meteorology and Solar Energy
+age_18_24_rate,ratio of people with age between 18 and 24,ACS 2015 (5-Year Estimates)
+age_25_34_rate,ratio of people with age between 25 and 34,ACS 2015 (5-Year Estimates)
+age_more_than_85_rate,ratio of people with age more than 85,ACS 2015 (5-Year Estimates)
+age_75_84_rate,ratio of people with age between 75 and 84,ACS 2015 (5-Year Estimates)
+age_35_44_rate,ratio of people with age between 35 and 44,ACS 2015 (5-Year Estimates)
+age_45_54_rate,ratio of people with age between 45 and 54,ACS 2015 (5-Year Estimates)
+age_65_74_rate,ratio of people with age between 65 and 74,ACS 2015 (5-Year Estimates)
+age_55_64_rate,ratio of people with age between 55 and 64,ACS 2015 (5-Year Estimates)
+age_10_14_rate,ratio of people with age between 10 and 14,ACS 2015 (5-Year Estimates)
+age_15_17_rate,ratio of people with age between 15 and 17,ACS 2015 (5-Year Estimates)
+age_5_9_rate,ratio of people with age between 5 and 9,ACS 2015 (5-Year Estimates)
+household_type_family_rate,ratio of household with family,ACS 2015 (5-Year Estimates)
+dropout_16_19_inschool_rate,dropout rate for population 16 to 19 years,ACS 2015 (5-Year Estimates)
+occupation_construction_rate,ratio of construction-related occupation,ACS 2015 (5-Year Estimates)
+occupation_public_rate,ratio of public-related occupation,ACS 2015 (5-Year Estimates)
+occupation_information_rate,ratio of information-related occupation,ACS 2015 (5-Year Estimates)
+occupation_finance_rate,ratio of finance-related occupation,ACS 2015 (5-Year Estimates)
+occupation_education_rate,ratio of education-related occupation,ACS 2015 (5-Year Estimates)
+occupation_administrative_rate,ratio of adminstrative-related occupation,ACS 2015 (5-Year Estimates)
+occupation_manufacturing_rate,ratio of manufacturing-related occupation,ACS 2015 (5-Year Estimates)
+occupation_wholesale_rate,ratio of wholesale-related occupation,ACS 2015 (5-Year Estimates)
+occupation_retail_rate,ratio of retail-related occupation,ACS 2015 (5-Year Estimates)
+occupation_transportation_rate,ratio of transportation-related occupation,ACS 2015 (5-Year Estimates)
+occupation_arts_rate,ratio of art-related occupation,ACS 2015 (5-Year Estimates)
+occupation_agriculture_rate,ratio of agriculture-related occupation,ACS 2015 (5-Year Estimates)
+occupancy_vacant_rate,ratio of vacant housing units,ACS 2015 (5-Year Estimates)
+occupancy_owner_rate,ratio of owner-occupied housing units,ACS 2015 (5-Year Estimates)
+mortgage_with_rate,ratio of housing units with mortgage,ACS 2015 (5-Year Estimates)
+transportation_home_rate,ratio of working at home,ACS 2015 (5-Year Estimates)
+transportation_car_alone_rate,ratio of using car as transportation to work,ACS 2015 (5-Year Estimates)
+transportation_walk_rate,ratio of walking to work,ACS 2015 (5-Year Estimates)
+transportation_carpool_rate,ratio of using carpool as transportation to work,ACS 2015 (5-Year Estimates)
+transportation_motorcycle_rate,ratio of using motorcycle as transportation to work,ACS 2015 (5-Year Estimates)
+transportation_bicycle_rate,ratio of using bicycle as transportation to work,ACS 2015 (5-Year Estimates)
+transportation_public_rate,ratio of using public transportation to work,ACS 2015 (5-Year Estimates)
+travel_time_less_than_10_rate,ratio of taking less than 10 min travel to work,ACS 2015 (5-Year Estimates)
+travel_time_10_19_rate,ratio of taking less 10-19 min travel to work,ACS 2015 (5-Year Estimates)
+travel_time_20_29_rate,ratio of taking less 20-29 min travel to work,ACS 2015 (5-Year Estimates)
+travel_time_30_39_rate,ratio of taking less 30-39 min travel to work,ACS 2015 (5-Year Estimates)
+travel_time_40_59_rate,ratio of taking less 40-59 min travel to work,ACS 2015 (5-Year Estimates)
+travel_time_60_89_rate,ratio of taking less 60-89 min travel to work,ACS 2015 (5-Year Estimates)
+health_insurance_public_rate,ratio of taking public health insurance,ACS 2015 (5-Year Estimates)
+health_insurance_none_rate,ratio of taking no health insurance,ACS 2015 (5-Year Estimates)
+age_median,median age,ACS 2015 (5-Year Estimates)
+travel_time_average,average travel time to work,ACS 2015 (5-Year Estimates)
+voting_2016_dem_percentage,DEM voting percentage in 2016 election,townhall.com
+voting_2016_gop_percentage,GOP voting percentage in 2016 election,townhall.com
+voting_2016_dem_win,DEM win or not in 2016 election,townhall.com
+voting_2012_dem_percentage,DEM voting percentage in 2012 election,theguardian.com
+voting_2012_gop_percentage,GOP voting percentage in 2012 election,theguardian.com
+voting_2012_dem_win,DEM win or not in 2012 election,theguardian.com
+number_of_years_of_education,number of years of education,ACS 2015 (5-Year Estimates)
+diversity,racial diversity,ACS 2015 (5-Year Estimates)
+number_of_solar_system_per_household,number of residential solar power systems per household,deepsolar
+incentive_count_residential,number of incentives for residenial solar,www.dsireusa.org
+incentive_count_nonresidential,number of incentives for residenial solar,www.dsireusa.org
+incentive_residential_state_level,number of state-level incentives for residenial solar,www.dsireusa.org
+incentive_nonresidential_state_level,number of state-level incentives for non-residenial solar,www.dsireusa.org
+net_metering,number of years since the start of net metering,www.dsireusa.org
+feedin_tariff,number of years since the start of feed-in tariff,www.dsireusa.org
+cooperate_tax,number of years since the start of corporate tax credit programs,www.dsireusa.org
+property_tax,number of years since the start of property tax incentives,www.dsireusa.org
+sales_tax,number of years since the start of sales tax incentives,www.dsireusa.org
+rebate,number of years since the start of rebate program,www.dsireusa.org
+avg_electricity_retail_rate,average residential retail electricity price over the past 5 years,EIA
